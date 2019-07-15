@@ -27,6 +27,7 @@ import (
 	"github.com/whiteblock/genesis/protocols/ethereum"
 	"github.com/whiteblock/genesis/protocols/helpers"
 	"github.com/whiteblock/genesis/protocols/registrar"
+	"github.com/whiteblock/genesis/protocols/eth2"
 	"github.com/whiteblock/genesis/ssh"
 	"github.com/whiteblock/genesis/testnet"
 	"github.com/whiteblock/genesis/util"
@@ -163,6 +164,12 @@ func build(tn *testnet.TestNet) error {
 	tn.BuildState.SetExt("port", ethereum.RPCPort)
 	helpers.SetFunctionalityGroup(tn, "eth")
 	ethereum.ExposeAccounts(tn, accounts)
+
+	contractAddr, err := eth2.DeploySmartContract(tn)
+	if err!=nil {
+		util.LogError(err)
+	}
+	eth2.SendDeposit(tn, accounts, contractAddr)
 
 	return nil
 }
